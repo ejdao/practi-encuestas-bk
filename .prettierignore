@@ -1,3 +1,6 @@
+# Files
+app.entities.ts
+
 # Ignore artifacts:
 .scannerwork
 .vscode

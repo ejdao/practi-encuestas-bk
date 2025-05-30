@@ -1,10 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ENVIRONMENTS } from './app.environments';
+import { initSwagger } from './app.swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const httpsOptions = {
+    cert: ENVIRONMENTS.rsa.https.cert,
+    key: ENVIRONMENTS.rsa.https.key,
+  };
+
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    ENVIRONMENTS.https ? { httpsOptions } : {}
+  );
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -13,13 +23,25 @@ async function bootstrap() {
     })
   );
 
+  if (ENVIRONMENTS.showDocs) initSwagger(app);
+
   app.useStaticAssets('./public', {
     prefix: '/public',
     index: false,
   });
 
-  await app.listen(3000);
+  app.enableCors({
+    origin: function (origin, callback) {
+      if (!origin || ENVIRONMENTS.whiteList.indexOf(origin) >= 0) callback(null, true);
+      else callback(new Error('Not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 204,
+  });
 
-  Logger.log(`Started on port 3000`);
+  await app.listen(ENVIRONMENTS.port);
+
+  Logger.log(`Iniciado en puerto ${ENVIRONMENTS.port}`);
 }
 bootstrap();

@@ -11,7 +11,7 @@ export class DepartamentoOrm {
   @Column({ name: 'CODIGO', length: 2 })
   codigo: string;
 
-  @Column({ name: 'NOMBRE', length: 80 })
+  @Column({ name: 'NOMBRE', length: 100 })
   nombre: string;
 
   @Column({ name: TABLE_NAMES.general.ubicacion.paises })

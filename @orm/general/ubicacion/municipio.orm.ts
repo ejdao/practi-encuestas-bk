@@ -12,7 +12,7 @@ export class MunicipioOrm {
   @Column({ name: 'CODIGO', length: 3 })
   codigo: string;
 
-  @Column({ name: 'NOMBRE', length: 40 })
+  @Column({ name: 'NOMBRE', length: 100 })
   nombre: string;
 
   @Column({ name: 'ZONA' })

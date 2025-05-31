@@ -1,5 +1,8 @@
 # Files
 app.entities.ts
+app.connections.ts
+@common/domain/types
+@types
 
 # Ignore artifacts:
 .scannerwork

@@ -1,15 +1,35 @@
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SRD_MODULES } from '@srd/shared.module';
+
+const config = [{ name: 'Shared', url: 'docs/shared', version: `1.0.0`, modules: SRD_MODULES }];
 
 export const initSwagger = (app: INestApplication) => {
-  const options = new DocumentBuilder()
-    .setTitle('Proyecto base (Backend)')
-    .setDescription('API para proyecto base')
+  const principalOptions = new DocumentBuilder()
+    .setTitle('Proyecto Base')
     .setVersion('1.0.0')
-    .addBearerAuth()
     .build();
+  const principalDocument = SwaggerModule.createDocument(app, principalOptions);
+  const swaggerOptionsUrls: { name: string; url: string }[] = [];
+  config.forEach(el => {
+    swaggerOptionsUrls.push({ name: el.name, url: `${el.url}/swagger.json` });
+  });
+  SwaggerModule.setup('docs', app, principalDocument, {
+    explorer: true,
+    swaggerOptions: { urls: swaggerOptionsUrls },
+    jsonDocumentUrl: `/docs/swagger.json`,
+  });
 
-  const document = SwaggerModule.createDocument(app, options);
-
-  SwaggerModule.setup('/docs', app, document);
+  config.forEach(el => {
+    const documentBuilder = new DocumentBuilder()
+      .setTitle(`Proyecto Base (${el.name})`)
+      .setVersion(el.version)
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, documentBuilder, { include: el.modules });
+    SwaggerModule.setup(el.url, app, document, {
+      explorer: true,
+      jsonDocumentUrl: `${el.url}/swagger.json`,
+    });
+  });
 };

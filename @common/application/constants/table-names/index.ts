@@ -1,5 +1,5 @@
-import { __GEN__TBL_NMS__ } from './general';
+import { __SRD__TBL_NMS__ } from './shared';
 
 export const TABLE_NAMES = {
-  general: __GEN__TBL_NMS__,
+  shared: __SRD__TBL_NMS__,
 };

@@ -1,10 +1,10 @@
-import { AuthModule } from '@auth/auth.module';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { SRD_MODULES } from '@srd/shared.module';
+import { SRD_MODULES } from '@gen/shared/shared.module';
+import { GEN_MODULES } from '@gen/general.module';
 
 const config = [
-  { name: 'Auth', url: 'docs/auth', version: `1.0.0`, modules: [AuthModule] },
+  { name: 'General', url: 'docs/general', version: `1.0.0`, modules: GEN_MODULES },
   { name: 'Shared', url: 'docs/shared', version: `1.0.0`, modules: SRD_MODULES },
 ];
 

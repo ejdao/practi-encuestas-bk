@@ -1,28 +1,28 @@
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
-import { PaisCrudSource } from '@srd/ubicacion/infrastructure/repositories';
-import { PaisRes } from '@srd/ubicacion/application/responses';
+import { DepartamentoCrudSource } from '@gen/ubicacion/infrastructure/repositories';
+import { DepartamentoRes } from '@gen/ubicacion/application/responses';
 
 @ApiTags('V1 | Ubicación')
-@Controller('v1/srd/ubicacion/paises')
-export class PaisesCrudController {
-  constructor(private _crud: PaisCrudSource) {}
+@Controller('v1/srd/ubicacion/departamentos')
+export class DepartamentosCrudController {
+  constructor(private _crud: DepartamentoCrudSource) {}
 
-  @ApiOkResponse({ type: PaisRes, isArray: true })
+  @ApiOkResponse({ type: DepartamentoRes, isArray: true })
+  @ApiQuery({ name: 'paisId', required: true, type: Number })
   @ApiQuery({ name: 'pattern', required: false, type: String })
-  @ApiQuery({ name: 'addDepartamentos', required: false, type: Boolean })
   @ApiQuery({ name: 'addMunicipios', required: false, type: Boolean })
   @ApiQuery({ name: 'addCorregimientos', required: false, type: Boolean })
   @Get()
   public async fetch(
+    @Query('paisId') paisId: number,
     @Query('pattern') pattern: string,
-    @Query('addDepartamentos') addDepartamentos: boolean,
     @Query('addMunicipios') addMunicipios: boolean,
     @Query('addCorregimientos') addCorregimientos: boolean
-  ): Promise<PaisRes[]> {
+  ): Promise<DepartamentoRes[]> {
     try {
-      const result = await this._crud.fetch(pattern, {
-        addDepartamentos,
+      if (!paisId) throw new Error('Primero debe seleccionar un país');
+      const result = await this._crud.fetch(+paisId, pattern, {
         addMunicipios,
         addCorregimientos,
       });

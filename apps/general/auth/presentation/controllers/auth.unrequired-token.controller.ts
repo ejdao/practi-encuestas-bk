@@ -1,10 +1,10 @@
 import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BadRequestException, Body, Controller, Get, Post } from '@nestjs/common';
 import { CTM_LOGIC_CONTEXTS_VALUES, CtmContextType } from '@common/domain/types';
-import { LoginUserImpl } from '@auth/infrastructure/services';
+import { LoginUserImpl } from '@gen/auth/infrastructure/services';
 import { CtmTypeRes } from '@common/application/responses';
-import { LoginRes } from '@auth/application/responses';
-import { LoginDto } from '@auth/application/dtos';
+import { LoginRes } from '@gen/auth/application/responses';
+import { LoginDto } from '@gen/auth/application/dtos';
 
 @ApiTags('V1 | Autenticación')
 @Controller('v1/auth')

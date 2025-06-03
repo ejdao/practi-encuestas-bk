@@ -19,9 +19,8 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@ctypes/*": ["@types/*"],
-      "@srd/*": ["apps/shared/*"],
-      "@auth/*": ["apps/auth/*"],
-      "@gen/*": ["apps/general/*"]
+      "@gen/*": ["apps/general/*"],
+      "@gen/ubicacion/*": ["apps/general/shared/ubicacion/*"]
     }
   }
 }

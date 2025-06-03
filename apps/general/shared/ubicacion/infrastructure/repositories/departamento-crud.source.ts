@@ -1,6 +1,6 @@
 import { Raw } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { DepartamentoRes } from '@srd/ubicacion/application/responses';
+import { DepartamentoRes } from '@gen/ubicacion/application/responses';
 import { STRING_UTILITIES } from '@common/application/services';
 import { DepartamentoOrm } from '@orm/shared/ubicacion';
 import { UBICACION_FACTORIES } from '../factories';

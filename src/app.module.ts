@@ -1,10 +1,9 @@
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { DATASOURCES } from './app.connections';
-import { AuthModule } from '@auth/auth.module';
-import { SharedModule } from '@srd/shared.module';
+import { GeneralModule } from '@gen/general.module';
 
 @Module({
-  imports: [AuthModule, SharedModule],
+  imports: [GeneralModule],
 })
 export class AppModule implements OnModuleInit {
   onModuleInit() {

@@ -1,8 +1,8 @@
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { BadRequestException, Controller, Get, Param, Query } from '@nestjs/common';
-import { AuthServicesImpl } from '@auth/infrastructure/services';
+import { AuthServicesImpl } from '@gen/auth/infrastructure/services';
+import { MyAuthDataRes } from '@gen/auth/application/responses';
 import { CommonGuards } from '@common/presentation/decorators';
-import { MyAuthDataRes } from '@auth/application/responses';
 
 @ApiTags('V1 | Autenticación')
 @CommonGuards()

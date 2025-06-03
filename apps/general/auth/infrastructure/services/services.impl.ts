@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CYPTO_SERVICES, JWT_SERVICES } from '@common/application/services';
+import { MyAuthDataRes } from '@gen/auth/application/responses';
 import { BaseSource } from '@common/infrastructure/services';
-import { MyAuthDataRes } from '@auth/application/responses';
 import { TokenOrm } from '@orm/general/seguridad';
 import { UsuarioOrm } from '@orm/general/auth';
 

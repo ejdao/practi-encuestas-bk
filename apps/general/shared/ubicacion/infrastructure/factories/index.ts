@@ -5,7 +5,7 @@ import {
   DepartamentoRes,
   MunicipioRes,
   PaisRes,
-} from '@srd/ubicacion/application/responses';
+} from '@gen/ubicacion/application/responses';
 
 const municipioOrmToRes = (data: MunicipioOrm, codigo: string) => {
   const e = new MunicipioRes();

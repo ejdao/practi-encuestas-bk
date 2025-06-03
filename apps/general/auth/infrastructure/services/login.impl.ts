@@ -2,8 +2,8 @@ import { CYPTO_SERVICES, decryptValueFromFront, JWT_SERVICES } from '@common/app
 import { ESTADO_USUARIO, estadoUsuarioTypeFactory } from '@ctypes/general/usuario';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ctmContextTypeFactory } from '@common/domain/types';
-import { LoginRes } from '@auth/application/responses';
-import { LoginDto } from '@auth/application/dtos';
+import { LoginRes } from '@gen/auth/application/responses';
+import { LoginDto } from '@gen/auth/application/dtos';
 import { TokenOrm } from '@orm/general/seguridad';
 import { switchConn } from 'src/app.connections';
 import { UsuarioOrm } from '@orm/general/auth';

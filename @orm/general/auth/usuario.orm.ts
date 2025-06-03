@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { EstadoUsuarioCode, TipoDocUsuarioCode } from '@ctypes/general/usuario';
 import { TABLE_NAMES } from '@common/application/constants';
-import { PermisoOrm } from './seguridad/permiso.orm';
+import { PermisoOrm } from '../seguridad/permiso.orm';
 import { RolOrm } from './rol.orm';
 
 @Entity(TABLE_NAMES.general.usuarios)
@@ -67,4 +67,10 @@ export class UsuarioOrm {
     inverseJoinColumn: { name: TABLE_NAMES.general.seguridad.permisos, referencedColumnName: 'id' },
   })
   permisos: PermisoOrm[];
+
+  getNombreCompleto(): string {
+    return `${this.primerNombre}${this.segundoNombre ? ' ' + this.segundoNombre : ''} ${
+      this.primerApellido
+    }${this.segundoApellido ? ' ' + this.segundoApellido : ''}`;
+  }
 }

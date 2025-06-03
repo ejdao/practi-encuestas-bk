@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { TipoTransaccionOrm } from './tipo-transaccion.orm';
 import { TABLE_NAMES } from '@common/application/constants';
-import { UsuarioOrm } from './usuario.orm';
+import { UsuarioOrm } from '../auth/usuario.orm';
 
 @Entity(TABLE_NAMES.general.transacciones)
 export class TransaccionOrm {

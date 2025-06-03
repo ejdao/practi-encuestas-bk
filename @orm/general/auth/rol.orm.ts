@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { TABLE_NAMES } from '@common/application/constants';
-import { PermisoOrm } from './seguridad/permiso.orm';
+import { PermisoOrm } from '../seguridad/permiso.orm';
 import { UsuarioOrm } from './usuario.orm';
 
 @Entity(TABLE_NAMES.general.roles)

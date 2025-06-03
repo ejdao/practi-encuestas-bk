@@ -1,8 +1,12 @@
+import { AuthModule } from '@auth/auth.module';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SRD_MODULES } from '@srd/shared.module';
 
-const config = [{ name: 'Shared', url: 'docs/shared', version: `1.0.0`, modules: SRD_MODULES }];
+const config = [
+  { name: 'Auth', url: 'docs/auth', version: `1.0.0`, modules: [AuthModule] },
+  { name: 'Shared', url: 'docs/shared', version: `1.0.0`, modules: SRD_MODULES },
+];
 
 export const initSwagger = (app: INestApplication) => {
   const principalOptions = new DocumentBuilder()

@@ -20,6 +20,7 @@
     "paths": {
       "@ctypes/*": ["@types/*"],
       "@srd/*": ["apps/shared/*"],
+      "@auth/*": ["apps/auth/*"],
       "@gen/*": ["apps/general/*"]
     }
   }

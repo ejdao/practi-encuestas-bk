@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ManyToMany } from 'typeorm';
 import { TABLE_NAMES } from '@common/application/constants';
+import { UsuarioOrm } from '../auth/usuario.orm';
 import { SubModuloOrm } from './sub-modulo.orm';
-import { UsuarioOrm } from '../usuario.orm';
 import { ModuloOrm } from './modulo.orm';
-import { RolOrm } from '../rol.orm';
+import { RolOrm } from '../auth/rol.orm';
 
 @Entity(TABLE_NAMES.general.seguridad.permisos)
 export class PermisoOrm {
@@ -38,4 +38,7 @@ export class PermisoOrm {
 
   @ManyToMany(() => UsuarioOrm, usuario => usuario.permisos)
   usuarios: UsuarioOrm[];
+
+  isFromUsuario = false;
+  isFromRol = false;
 }

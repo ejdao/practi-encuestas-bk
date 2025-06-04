@@ -6,29 +6,15 @@ import { initSwagger } from './app.swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const httpsOptions = {
-    cert: ENVIRONMENTS.rsa.https.cert,
-    key: ENVIRONMENTS.rsa.https.key,
-  };
+  const httpsOptions = { cert: ENVIRONMENTS.rsa.https.cert, key: ENVIRONMENTS.rsa.https.key };
 
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-    ENVIRONMENTS.https ? { httpsOptions } : {}
-  );
+  const appOptions = ENVIRONMENTS.httpsIsActive ? { httpsOptions } : {};
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-    })
-  );
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, appOptions);
 
-  if (ENVIRONMENTS.showDocs) initSwagger(app);
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
-  app.useStaticAssets('./public', {
-    prefix: '/public',
-    index: false,
-  });
+  app.useStaticAssets('./public', { prefix: '/public', index: false });
 
   app.enableCors({
     origin: function (origin, callback) {
@@ -39,6 +25,8 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 204,
   });
+
+  if (ENVIRONMENTS.showDocs) initSwagger(app);
 
   await app.listen(ENVIRONMENTS.port);
 

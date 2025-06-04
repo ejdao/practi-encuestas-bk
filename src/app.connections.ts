@@ -1,9 +1,8 @@
 import { DataSource } from 'typeorm';
 import { CTM_CONTEXTS, CtmContextType } from '@common/domain/types';
-
+import { JustForVerifyOrm } from '@common/infrastructure/services';
 import { ORM_SHARED_ENTITIES } from '@orm/shared';
 import { ORM_ENTITIES } from './app.entities';
-
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -21,13 +20,17 @@ export const SHARED_DES = new DataSource({
   port,
 });
 
+const synchronize = false;
+const entities = ORM_ENTITIES;
+if(!synchronize) entities.unshift(JustForVerifyOrm as any)
+
 export const DEFAULT_DES = new DataSource({
   username: process.env.DEFAULT_USERNAME_DB,
   password: process.env.DEFAULT_PASS_DB,
   database: process.env.DEFAULT_NAME_DB,
   host: process.env.DEFAULT_HOST_DB,
-  entities : ORM_ENTITIES,
-  synchronize: false,
+  entities,
+  synchronize,
   type,
   port,
 });

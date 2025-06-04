@@ -1,6 +1,6 @@
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
-import { DATASOURCES } from './app.connections';
 import { GeneralModule } from '@gen/general.module';
+import { DATASOURCES } from './app.connections';
 
 @Module({
   imports: [GeneralModule],

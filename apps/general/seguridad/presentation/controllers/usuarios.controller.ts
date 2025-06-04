@@ -1,0 +1,86 @@
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ESTADO_USUARIO_VALUES, EstadoUsuarioType } from '@ctypes/general/usuario';
+import { CreateUsuarioRes, FetchUsuarioRes } from '@gen/seguridad/application/responses';
+import { CreateUsuarioDto, UpdateUsuarioDto } from '@gen/seguridad/application/dtos';
+import { UsuarioCrudSource } from '@gen/seguridad/infrastructure/repositories';
+import { Authorities, CommonGuards } from '@common/presentation/decorators';
+import { CtmTypeRes } from '@common/application/responses';
+import { GEN_AUTHORITIES } from '@authorities/general';
+
+@ApiTags('V1 | Usuarios')
+@CommonGuards()
+@Controller('v1/gen/usuarios')
+export class UsuariosController {
+  constructor(private _crud: UsuarioCrudSource) {}
+
+  @ApiOkResponse({ type: FetchUsuarioRes })
+  @Authorities([
+    GEN_AUTHORITIES.SEGURIDAD.REGISTRAR_ACTUALIZAR_USUARIOS,
+    GEN_AUTHORITIES.SEGURIDAD.GESTIONAR_PERMISOS_USUARIO_ROL,
+  ])
+  @Get()
+  public async fetch(
+    @Query('pattern') pattern: string,
+    @Query('isUpdatingUsers') isUpdatingUsers: boolean
+  ): Promise<FetchUsuarioRes[]> {
+    try {
+      return await this._crud.fetch(pattern, isUpdatingUsers);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @ApiOkResponse({ type: CreateUsuarioRes })
+  @Authorities([GEN_AUTHORITIES.SEGURIDAD.REGISTRAR_ACTUALIZAR_USUARIOS])
+  @Post()
+  public async create(@Body() body: CreateUsuarioDto): Promise<CreateUsuarioRes> {
+    try {
+      return await this._crud.create(body);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @ApiOkResponse({ type: Boolean })
+  @Authorities([GEN_AUTHORITIES.SEGURIDAD.REGISTRAR_ACTUALIZAR_USUARIOS])
+  @Put(':id')
+  public async update(@Param('id') id: string, @Body() body: UpdateUsuarioDto): Promise<boolean> {
+    try {
+      return await this._crud.update(id, body);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @ApiOkResponse({ type: CtmTypeRes, isArray: true })
+  @Authorities([GEN_AUTHORITIES.SEGURIDAD.REGISTRAR_ACTUALIZAR_USUARIOS])
+  @Get('estados/suggestions')
+  public async fetchEstados(): Promise<EstadoUsuarioType[]> {
+    try {
+      return ESTADO_USUARIO_VALUES;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @ApiOkResponse({ type: Boolean })
+  @Authorities([GEN_AUTHORITIES.SEGURIDAD.REGISTRAR_ACTUALIZAR_USUARIOS])
+  @Get('reset-password/:usuarioId')
+  public async resetPassword(@Param('usuarioId') usuarioId: string): Promise<boolean> {
+    try {
+      return await this._crud.resetPassword(usuarioId);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+}

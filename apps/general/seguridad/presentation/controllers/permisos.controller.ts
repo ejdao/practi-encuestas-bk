@@ -6,7 +6,6 @@ import { PermisosServicesImpl } from '@gen/seguridad/infrastructure/services';
 import { Authorities, CommonGuards } from '@common/presentation/decorators';
 import { CreatePermisoDto } from '@gen/seguridad/application/dtos';
 import { GEN_AUTHORITIES } from '@authorities/general';
-import { PermisoOrm } from '@orm/general/seguridad';
 
 @ApiTags('V1 | Permisos')
 @CommonGuards()
@@ -29,7 +28,7 @@ export class PermisosController {
   }
 
   @ApiOkResponse({ type: OnlyIdFromEntityRes })
-  @Authorities()
+  @Authorities([GEN_AUTHORITIES.SEGURIDAD.CREAR_PERMISOS])
   @Post()
   async create(@Body() body: CreatePermisoDto): Promise<OnlyIdFromEntityRes> {
     try {

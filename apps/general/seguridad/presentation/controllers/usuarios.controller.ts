@@ -8,7 +8,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ESTADO_USUARIO_VALUES, EstadoUsuarioType } from '@ctypes/general/usuario';
 import { CreateUsuarioRes, FetchUsuarioRes } from '@gen/seguridad/application/responses';
 import { CreateUsuarioDto, UpdateUsuarioDto } from '@gen/seguridad/application/dtos';
@@ -24,6 +24,8 @@ export class UsuariosController {
   constructor(private _crud: UsuarioCrudSource) {}
 
   @ApiOkResponse({ type: FetchUsuarioRes })
+  @ApiQuery({ name: 'pattern', required: false, type: String })
+  @ApiQuery({ name: 'isUpdatingUsers', required: false, type: String })
   @Authorities([
     GEN_AUTHORITIES.SEGURIDAD.REGISTRAR_ACTUALIZAR_USUARIOS,
     GEN_AUTHORITIES.SEGURIDAD.GESTIONAR_PERMISOS_USUARIO_ROL,

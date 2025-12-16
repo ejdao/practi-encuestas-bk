@@ -21,8 +21,12 @@ export class PermisosCrudSource extends BaseSource {
   }
 
   public async create(body: CreatePermisoDto): Promise<ModuloBasicoRes> {
+    body.moduloId = RSA_SERVICES.decryptId(body.moduloId);
+    body.subModuloId = RSA_SERVICES.decryptId(body.subModuloId);
     body.nombre = STRING_UTILITIES.upperCaseAndTrim(body.nombre);
+
     const { nombre, moduloId, subModuloId } = body;
+
     let failMsg = '';
     let permisoForThisBBDD: PermisoOrm;
     for (let index = 0; index < CTM_LOGIC_CONTEXTS_VALUES.length; index++) {
@@ -33,16 +37,13 @@ export class PermisosCrudSource extends BaseSource {
       try {
         const permisoRp = qr.manager.getRepository(PermisoOrm);
 
-        const modIdDecrypt = moduloId ? RSA_SERVICES.decryptId(moduloId) : null;
-        const subModIdDecrypt = subModuloId ? RSA_SERVICES.decryptId(subModuloId) : null;
-
-        await this.verifyEntityExist(TABLE_NAMES.general.seguridad.modulos, modIdDecrypt, qr);
-        await this.verifyEntityExist(TABLE_NAMES.general.seguridad.subModulos, subModIdDecrypt, qr);
+        await this.verifyEntityExist(TABLE_NAMES.general.seguridad.modulos, +moduloId, qr);
+        await this.verifyEntityExist(TABLE_NAMES.general.seguridad.subModulos, +subModuloId, qr);
 
         const conditions = {
           nombre,
-          moduloId: modIdDecrypt ? modIdDecrypt : IsNull(),
-          subModuloId: subModIdDecrypt ? modIdDecrypt : IsNull(),
+          moduloId: +moduloId,
+          subModuloId: +subModuloId,
         };
 
         const permisoConMismoNombre = await permisoRp.find({
@@ -65,8 +66,8 @@ export class PermisosCrudSource extends BaseSource {
         const newPermiso = new PermisoOrm();
         newPermiso.codigo = `${zeros}${newCodigoPermiso}`;
         newPermiso.isActivo = ctx.getCode() === this.auth.context.getCode() ? true : false;
-        newPermiso.moduloId = modIdDecrypt;
-        newPermiso.subModuloId = subModIdDecrypt;
+        newPermiso.moduloId = +moduloId;
+        newPermiso.subModuloId = +subModuloId;
         newPermiso.nombre = nombre;
 
         const permisoStored = await permisoRp.save(newPermiso);

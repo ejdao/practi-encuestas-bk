@@ -67,7 +67,6 @@ export class ModulosCrudSource extends BaseSource {
         newModulo.nombre = body.nombre;
 
         const moduloStored = await moduloRp.save(newModulo);
-        moduloStored.id = RSA_SERVICES.encryptId(moduloStored.id);
 
         if (ctx === this.auth.context) {
           delete moduloStored.isActivo;
@@ -86,7 +85,7 @@ export class ModulosCrudSource extends BaseSource {
     if (failMsg) throw new Error(`El registró falló en ${failMsg}`);
     else {
       moduloForThisBBDD.id = RSA_SERVICES.encryptId(moduloForThisBBDD.id);
-      return idToOnlyIdFromEntityResFactory(moduloForThisBBDD.id);
+      return idToOnlyIdFromEntityResFactory(moduloForThisBBDD.id, true);
     }
   }
 }

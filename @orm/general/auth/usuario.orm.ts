@@ -35,8 +35,11 @@ export class UsuarioOrm {
   @Column({ name: 'SEGAPELLIDO', length: 100, nullable: true })
   segundoApellido: string;
 
-  @Column({ name: 'NUMECELU', length: 15, nullable: true })
-  numeroCelular: string;
+  @Column({ name: 'NUMCONTACPRIN', length: 15, nullable: true })
+  numeroContactoPrincipal: string;
+
+  @Column({ name: 'NUMCONTACSECU', length: 15, nullable: true })
+  numeroContactoSecundario: string;
 
   @Column({ name: 'EMAIL', length: 50, nullable: true })
   email: string;

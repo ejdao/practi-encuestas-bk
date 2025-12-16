@@ -12,6 +12,7 @@ import { SubModuloOrm } from '@orm/general/seguridad';
 export class SubModulosCrudSource extends BaseSource {
   public async create(body: CreateSubModuloDto): Promise<OnlyIdFromEntityRes> {
     body.nombre = STRING_UTILITIES.upperCaseAndTrim(body.nombre);
+    body.moduloId = RSA_SERVICES.decryptId(body.moduloId);
     let failMsg = '';
     let subModuloForThisBBDD: SubModuloOrm;
     for (let index = 0; index < CTM_LOGIC_CONTEXTS_VALUES.length; index++) {
@@ -23,19 +24,17 @@ export class SubModulosCrudSource extends BaseSource {
         body.nombre = body.nombre.trim();
         const subModuloRp = qr.manager.getRepository(SubModuloOrm);
 
-        const modIdDecrypt = RSA_SERVICES.decryptId(body.moduloId);
-
-        await this.verifyEntityExist(TABLE_NAMES.general.seguridad.modulos, modIdDecrypt, qr);
+        await this.verifyEntityExist(TABLE_NAMES.general.seguridad.modulos, +body.moduloId, qr);
 
         const subModuloConMismoNombre = await subModuloRp.find({
-          where: { nombre: body.nombre, moduloId: modIdDecrypt },
+          where: { nombre: body.nombre, moduloId: +body.moduloId },
         });
         if (subModuloConMismoNombre.length) {
           throw new Error('Ya existe un subModulo con este nombre');
         }
 
         const lastSubModulo = await subModuloRp.find({
-          where: { moduloId: modIdDecrypt },
+          where: { moduloId: +body.moduloId },
           order: { id: 'desc' },
           take: 1,
         });
@@ -46,11 +45,10 @@ export class SubModulosCrudSource extends BaseSource {
         const newSubModulo = new SubModuloOrm();
         newSubModulo.codigo = `${zeros}${newCodigoSubModulo}`;
         newSubModulo.isActivo = true;
-        newSubModulo.moduloId = modIdDecrypt;
+        newSubModulo.moduloId = +body.moduloId;
         newSubModulo.nombre = body.nombre;
 
         const subModuloStored = await subModuloRp.save(newSubModulo);
-        subModuloStored.id = RSA_SERVICES.encryptId(subModuloStored.id);
 
         if (ctx === this.auth.context) {
           delete subModuloStored.isActivo;
@@ -68,6 +66,6 @@ export class SubModulosCrudSource extends BaseSource {
     }
 
     if (failMsg) throw new Error(`El registró falló en ${failMsg}`);
-    else return idToOnlyIdFromEntityResFactory(subModuloForThisBBDD.id);
+    else return idToOnlyIdFromEntityResFactory(subModuloForThisBBDD.id, true);
   }
 }

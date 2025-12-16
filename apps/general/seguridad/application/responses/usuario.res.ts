@@ -37,7 +37,10 @@ export class FetchUsuarioRes {
   nombreCompleto: string;
 
   @ApiProperty({ example: 'string | null' })
-  numeroCelular: string;
+  numeroContactoPrincipal: string;
+
+  @ApiProperty({ example: 'string | null' })
+  numeroContactoSecundario: string;
 
   @ApiProperty({ example: 'string | null' })
   email: string;

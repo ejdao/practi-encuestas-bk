@@ -6,12 +6,11 @@ import { CreateUsuarioRes, FetchUsuarioRes } from '@gen/seguridad/application/re
 import { CreateUsuarioDto, UpdateUsuarioDto } from '@gen/seguridad/application/dtos';
 import { usuarioOrmToUsuarioResFactory } from '../factories';
 import { TABLE_NAMES } from '@common/application/constants';
-import { RolOrm, UsuarioOrm } from '@orm/general/auth';
+import { UsuarioOrm } from '@orm/general/auth';
 import { TokenOrm } from '@orm/general/seguridad';
 import { TRANSACCIONES } from '@transacciones';
 import {
   ESTADO_USUARIO,
-  EstadoUsuarioCode,
   estadoUsuarioTypeFactory,
   tipoDocUsuarioTypeFactory,
 } from '@ctypes/general/usuario';
@@ -60,7 +59,7 @@ export class UsuarioCrudSource extends BaseSource {
       newUsuario.tipoDocumentoCode = tipoDocUsuarioTypeFactory(body.tipoDocumentoCode).getCode();
       newUsuario.estadoCode = estadoUsuarioTypeFactory(body.estadoCode).getCode();
       newUsuario.documento = STRING_UTILITIES.trim(body.documento);
-      newUsuario.numeroCelular = STRING_UTILITIES.trim(body.numeroCelular);
+      newUsuario.numeroContactoPrincipal = STRING_UTILITIES.trim(body.numeroCelular);
       newUsuario.email = STRING_UTILITIES.lowerCaseAndTrim(body.email);
       newUsuario.password = await CYPTO_SERVICES.encrypt('123');
       newUsuario.isPasswordReiniciada = true;
@@ -90,13 +89,17 @@ export class UsuarioCrudSource extends BaseSource {
       await this.qr.connect();
       await this.qr.startTransaction();
 
-      const usuarioIdDcd = RSA_SERVICES.decryptId(id);
-      const rolIdDcd = RSA_SERVICES.decryptId(body.rolId);
+      const usuarioIdDcd: number = RSA_SERVICES.decryptId(id);
+      let rolIdDcd: number;
 
       if (this.auth.id === usuarioIdDcd) throw new Error('No puede actualizar su propio usuario');
 
       await this.verifyEntityExist(TABLE_NAMES.general.usuarios, usuarioIdDcd);
-      await this.verifyEntityExist(TABLE_NAMES.general.roles, rolIdDcd);
+
+      if (body.rolId) {
+        rolIdDcd = RSA_SERVICES.decryptId(body.rolId);
+        await this.verifyEntityExist(TABLE_NAMES.general.roles, rolIdDcd);
+      }
 
       const usuarioRp = this.qr.manager.getRepository(UsuarioOrm);
       const tokenRp = this.qr.manager.getRepository(TokenOrm);
@@ -120,16 +123,34 @@ export class UsuarioCrudSource extends BaseSource {
 
       const SU = STRING_UTILITIES;
 
-      if (body.rolId) usuario.rolId = rolIdDcd;
-      if (body.primerNombre) usuario.primerNombre = SU.upperCaseAndTrim(body.primerNombre);
-      if (body.primerApellido) usuario.primerApellido = SU.upperCaseAndTrim(body.primerApellido);
-      if (body.segundoNombre) usuario.segundoNombre = SU.upperCaseAndTrim(body.segundoNombre);
-      if (body.segundoApellido) usuario.segundoApellido = SU.upperCaseAndTrim(body.segundoApellido);
-      if (body.tipoDocumentoCode) usuario.tipoDocumentoCode = tipoDocumentoCode;
-      if (body.estadoCode) usuario.estadoCode = estadoCode;
-      if (body.documento) usuario.documento = SU.trim(body.documento);
-      if (body.numeroCelular) usuario.numeroCelular = SU.trim(body.numeroCelular);
-      if (body.email) usuario.email = SU.lowerCaseAndTrim(body.email);
+      if (rolIdDcd) usuario.rolId = rolIdDcd;
+      if (body.primerNombre !== undefined) {
+        usuario.primerNombre = SU.upperCaseAndTrim(body.primerNombre);
+      }
+      if (body.primerApellido !== undefined) {
+        usuario.primerApellido = SU.upperCaseAndTrim(body.primerApellido);
+      }
+      if (body.segundoNombre !== undefined) {
+        usuario.segundoNombre = SU.upperCaseAndTrim(body.segundoNombre);
+      }
+      if (body.segundoApellido !== undefined) {
+        usuario.segundoApellido = SU.upperCaseAndTrim(body.segundoApellido);
+      }
+      if (body.tipoDocumentoCode !== undefined) {
+        usuario.tipoDocumentoCode = tipoDocumentoCode;
+      }
+      if (body.estadoCode !== undefined) {
+        usuario.estadoCode = estadoCode;
+      }
+      if (body.documento !== undefined) {
+        usuario.documento = SU.trim(body.documento);
+      }
+      if (body.numeroCelular !== undefined) {
+        usuario.numeroContactoPrincipal = SU.trim(body.numeroCelular);
+      }
+      if (body.email !== undefined) {
+        usuario.email = SU.lowerCaseAndTrim(body.email);
+      }
 
       if (estadoCode !== ESTADO_USUARIO.ACTIVO.getCode()) {
         token.token = null;

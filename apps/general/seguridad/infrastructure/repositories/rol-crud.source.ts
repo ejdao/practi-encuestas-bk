@@ -4,6 +4,7 @@ import { FetchRolRes } from '@gen/seguridad/application/responses';
 import { STRING_UTILITIES } from '@common/application/services';
 import { BaseSource } from '@common/infrastructure/services';
 import { rolOrmToFetchRolResFactory } from '../factories';
+import { ROLES_USUARIO } from '@ctypes/general/usuario';
 import { RolOrm } from '@orm/general/auth';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class RolCrudSource extends BaseSource {
     });
 
     /** Solo sale rol "SIN PERMISOS" cuando estan creando al nuevo usuario */
-    if (!pattern) roles = roles.filter(r => r.codigo !== '000');
+    if (!pattern) roles = roles.filter(r => r.codigo !== ROLES_USUARIO.SIN_PERMISOS.getCode());
 
     return roles.map(r => rolOrmToFetchRolResFactory(r, addComplements));
   }

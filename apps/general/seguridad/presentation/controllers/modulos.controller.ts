@@ -4,6 +4,7 @@ import { FetchModuloRes, OnlyIdFromEntityRes } from '@gen/seguridad/application/
 import { ModulosCrudSource } from '@gen/seguridad/infrastructure/repositories';
 import { Authorities, CommonGuards } from '@common/presentation/decorators';
 import { CreateModuloDto } from '@gen/seguridad/application/dtos';
+import { GEN_AUTHORITIES } from '@authorities/general';
 
 @ApiTags('V1 | Modulos')
 @CommonGuards()
@@ -12,7 +13,7 @@ export class ModulosController {
   constructor(private _crud: ModulosCrudSource) {}
 
   @ApiOkResponse({ type: FetchModuloRes })
-  @Authorities()
+  @Authorities([GEN_AUTHORITIES.SEGURIDAD.CREAR_PERMISOS])
   @Get()
   async fetch(): Promise<FetchModuloRes[]> {
     try {
@@ -23,7 +24,7 @@ export class ModulosController {
   }
 
   @ApiOkResponse({ type: OnlyIdFromEntityRes })
-  @Authorities()
+  @Authorities([GEN_AUTHORITIES.SEGURIDAD.CREAR_PERMISOS])
   @Post()
   async create(@Body() body: CreateModuloDto): Promise<OnlyIdFromEntityRes> {
     try {

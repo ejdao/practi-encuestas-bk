@@ -3,14 +3,16 @@ import * as NodeRSA from 'node-rsa';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+const convertStringToBoolean = (txt : string) => txt === 'true' ? true : false;
+
 export const ENVIRONMENTS = {
   port: process.env.PORT || 3000,
-  production: process.env.PRODUCTION === 'true' ? true : false,
-  showDocs: process.env.SHOWDOCS === 'true' ? true : false,
-  httpsIsActive: process.env.HTTPS === 'true' ? true : false,
+  production: convertStringToBoolean(process.env.PRODUCTION),
+  showDocs: convertStringToBoolean(process.env.SHOWDOCS),
+  httpsIsActive: convertStringToBoolean(process.env.HTTPS),
   secretKey: process.env.JWT_SECRET_KEY,
   rsa: {
-    isActive: process.env.RSA_ENCRYPT === 'true' ? true : false,
+    isActive: convertStringToBoolean(process.env.RSA_ENCRYPT),
     ids: {
       publicKey: new NodeRSA(fs.readFileSync('rsa/ids/public.pem', 'utf8')),
       privateKey: new NodeRSA(fs.readFileSync('rsa/ids/private.pem', 'utf8')),

@@ -91,9 +91,12 @@ export class AuthServicesImpl extends BaseSource {
     const usuarioRp = this.conn.getRepository(UsuarioOrm);
     const usuario = await usuarioRp.findOne({ where: { id: this.auth.id } });
 
+    const permisos = await this.fetchAuthoritiesByUsuario(this.auth.id, this.auth.context);
+
     const result = new MyAuthDataRes();
     result.documento = usuario.documento;
     result.nombreCompleto = usuario.getNombreCompleto();
+    result.permisos = permisos.onlyCodigos;
 
     return result;
   }

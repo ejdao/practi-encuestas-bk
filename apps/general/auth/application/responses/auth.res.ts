@@ -11,4 +11,7 @@ export class MyAuthDataRes {
 
   @ApiProperty()
   nombreCompleto: string;
+
+  @ApiProperty()
+  permisos: string[];
 }

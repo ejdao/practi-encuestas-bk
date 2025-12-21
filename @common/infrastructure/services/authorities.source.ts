@@ -103,19 +103,19 @@ export class AuthoritiesSource {
         if (el.modulo) {
           delete el.modulo.isActivo;
           codigos.push(el.modulo.codigo);
-          el.modulo.id = RSA_SERVICES.encryptId(el.modulo.id);
+          el.modulo.id = RSA_SERVICES.encryptId(el.modulo.id) as any;
           delete el.moduloId;
         }
         if (el.subModulo) {
           delete el.subModulo.isActivo;
           codigos.push(`${el.modulo.codigo}${el.subModulo.codigo}`);
-          el.subModulo.id = RSA_SERVICES.encryptId(el.subModulo.id);
+          el.subModulo.id = RSA_SERVICES.encryptId(el.subModulo.id) as any;
           delete el.subModulo.moduloId;
           delete el.subModuloId;
         }
         codigos.push(el.codigo);
         delete el.isActivo;
-        el.id = RSA_SERVICES.encryptId(el.id);
+        el.id = RSA_SERVICES.encryptId(el.id) as any;
       });
 
       return { permisos, onlyCodigos: uniq(codigos) };
@@ -173,19 +173,19 @@ export class AuthoritiesSource {
         if (el.modulo) {
           delete el.modulo.isActivo;
           codigos.push(el.modulo.codigo);
-          el.modulo.id = RSA_SERVICES.encryptId(el.modulo.id);
+          el.modulo.id = RSA_SERVICES.encryptId(el.modulo.id) as any;
           delete el.moduloId;
         }
         if (el.subModulo) {
           delete el.subModulo.isActivo;
           codigos.push(`${el.modulo.codigo}${el.subModulo.codigo}`);
-          el.subModulo.id = RSA_SERVICES.encryptId(el.subModulo.id);
+          el.subModulo.id = RSA_SERVICES.encryptId(el.subModulo.id) as any;
           delete el.subModulo.moduloId;
           delete el.subModuloId;
         }
         codigos.push(el.codigo);
         delete el.isActivo;
-        el.id = RSA_SERVICES.encryptId(el.id);
+        el.id = RSA_SERVICES.encryptId(el.id) as any;
       });
 
       return { permisos: permisosFiltered, onlyCodigos: uniq(codigos) };

@@ -21,8 +21,8 @@ export class PermisosCrudSource extends BaseSource {
   }
 
   public async create(body: CreatePermisoDto): Promise<ModuloBasicoRes> {
-    body.moduloId = RSA_SERVICES.decryptId(body.moduloId);
-    body.subModuloId = RSA_SERVICES.decryptId(body.subModuloId);
+    body.moduloId = RSA_SERVICES.decryptId(body.moduloId) as any;
+    body.subModuloId = RSA_SERVICES.decryptId(body.subModuloId) as any;
     body.nombre = STRING_UTILITIES.upperCaseAndTrim(body.nombre);
 
     const { nombre, moduloId, subModuloId } = body;

@@ -24,10 +24,10 @@ export class ModulosCrudSource extends BaseSource {
         el.subModulos.map(sm => {
           delete sm.isActivo;
           delete sm.moduloId;
-          sm.id = RSA_SERVICES.encryptId(sm.id);
+          sm.id = RSA_SERVICES.encryptId(sm.id) as any;
         });
         delete el.isActivo;
-        el.id = RSA_SERVICES.encryptId(el.id);
+        el.id = RSA_SERVICES.encryptId(el.id) as any;
       });
 
       return modulos.map(m => moduloOrmToFetchModuloResFactory(m));
@@ -84,7 +84,7 @@ export class ModulosCrudSource extends BaseSource {
 
     if (failMsg) throw new Error(`El registró falló en ${failMsg}`);
     else {
-      moduloForThisBBDD.id = RSA_SERVICES.encryptId(moduloForThisBBDD.id);
+      moduloForThisBBDD.id = RSA_SERVICES.encryptId(moduloForThisBBDD.id) as any;
       return idToOnlyIdFromEntityResFactory(moduloForThisBBDD.id, true);
     }
   }

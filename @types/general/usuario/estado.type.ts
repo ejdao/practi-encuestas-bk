@@ -17,7 +17,7 @@ export function estadoUsuarioTypeFactory(code: EstadoUsuarioCode): EstadoUsuario
     case 3: return SUSPENDIDO;
     case 4: return RETIRADO;
     case 5: return ACCESO_BLOQUEADO;
-    default: throw new Error('No existe status de usuario valido con este codigo');
+    default: throw new Error('No existe estado de usuario valido con este codigo');
   }
 }
 

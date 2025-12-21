@@ -23,7 +23,9 @@ export class UsuarioCrudSource extends BaseSource {
     if (documento && isUpdatingUsers && usuarios.length) {
       if (this.auth.id === usuarios[0].id) throw new Error('No puede modificar su propio usuario');
     }
-    return usuarios.map(u => usuarioOrmToUsuarioResFactory(u));
+    const res = usuarios.map(u => usuarioOrmToUsuarioResFactory(u));
+
+    return res;
   }
 
   public async create(body: CreateUsuarioDto): Promise<CreateUsuarioRes> {
@@ -152,7 +154,7 @@ export class UsuarioCrudSource extends BaseSource {
         usuario.email = SU.lowerCaseAndTrim(body.email);
       }
 
-      if (estadoCode !== ESTADO_USUARIO.ACTIVO.getCode()) {
+      if (token && estadoCode !== ESTADO_USUARIO.ACTIVO.getCode()) {
         token.token = null;
         await tokenRp.save(token);
       }

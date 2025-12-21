@@ -8,6 +8,6 @@ export * from './usuario.factories';
 
 export const idToOnlyIdFromEntityResFactory = (id: number, encryptId: boolean) => {
   const e = new OnlyIdFromEntityRes();
-  e.id = encryptId ? RSA_SERVICES.encryptId(id) : id;
+  e.id = (encryptId ? RSA_SERVICES.encryptId(id) : id) as any;
   return e;
 };

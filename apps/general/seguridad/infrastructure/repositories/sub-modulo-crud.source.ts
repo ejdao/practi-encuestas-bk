@@ -12,7 +12,7 @@ import { SubModuloOrm } from '@orm/general/seguridad';
 export class SubModulosCrudSource extends BaseSource {
   public async create(body: CreateSubModuloDto): Promise<OnlyIdFromEntityRes> {
     body.nombre = STRING_UTILITIES.upperCaseAndTrim(body.nombre);
-    body.moduloId = RSA_SERVICES.decryptId(body.moduloId);
+    body.moduloId = RSA_SERVICES.decryptId(body.moduloId) as any;
     let failMsg = '';
     let subModuloForThisBBDD: SubModuloOrm;
     for (let index = 0; index < CTM_LOGIC_CONTEXTS_VALUES.length; index++) {

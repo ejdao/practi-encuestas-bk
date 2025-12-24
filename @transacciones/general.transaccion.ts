@@ -1,0 +1,6 @@
+export const GEN_TRANSACCIONES = {
+  USUARIO: {
+    CREAR: `GENUSU001`,
+    MODIFICAR: `GENUSU002`,
+  },
+};

@@ -3,6 +3,7 @@ export const __GEN__TBL_NMS__ = {
   transacciones: 'GENTRANSAC',
   usuarios: 'GENUSUARIO',
   roles: 'GENROL',
+  eps: 'GENEPS',
   seguridad: {
     modulos: 'GENSEGMODULO',
     subModulos: 'GENSEGSUBMODO',

@@ -1,9 +1,10 @@
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { GeneralModule } from '@gen/general.module';
 import { DATASOURCES } from './app.connections';
+import { EncuestasModule } from '@enc/encuestas.module';
 
 @Module({
-  imports: [GeneralModule],
+  imports: [GeneralModule, EncuestasModule],
 })
 export class AppModule implements OnModuleInit {
   onModuleInit() {

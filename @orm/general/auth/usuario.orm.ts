@@ -63,6 +63,8 @@ export class UsuarioOrm {
   @JoinColumn({ name: TABLE_NAMES.general.roles })
   rol: RolOrm;
 
+  nombreCompleto: string;
+
   @ManyToMany(() => PermisoOrm, permiso => permiso.usuarios)
   @JoinTable({
     name: TABLE_NAMES.general.seguridad.permisosUsuario,
@@ -75,5 +77,9 @@ export class UsuarioOrm {
     return `${this.primerNombre}${this.segundoNombre ? ' ' + this.segundoNombre : ''} ${
       this.primerApellido
     }${this.segundoApellido ? ' ' + this.segundoApellido : ''}`;
+  }
+
+  setNombreCompleto(): void {
+    this.nombreCompleto = this.getNombreCompleto();
   }
 }

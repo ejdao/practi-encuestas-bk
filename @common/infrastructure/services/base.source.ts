@@ -5,7 +5,7 @@ import { DataSource, Entity, PrimaryGeneratedColumn, QueryRunner, Repository } f
 import { TipoTransaccionOrm, TransaccionOrm } from '@orm/general/transacciones';
 import { JWT_SERVICES } from '@common/application/services';
 import { AuthoritiesSource } from './authorities.source';
-import { CtmContextType } from '@common/domain/types';
+import { CTM_CONTEXTS, CtmContextType } from '@common/domain/types';
 import { switchConn } from 'src/app.connections';
 import { UsuarioOrm } from '@orm/general/auth';
 
@@ -20,11 +20,16 @@ export class BaseSource extends AuthoritiesSource {
   protected conn: DataSource;
   protected qr: QueryRunner;
 
+  protected sharedConn: DataSource;
+  protected sharedQr: QueryRunner;
+
   constructor(@Inject(REQUEST) private _request: Request) {
     super();
     try {
       this.conn = switchConn(this.auth.context);
+      this.sharedConn = switchConn(CTM_CONTEXTS.SHARED);
       this.qr = this.conn.createQueryRunner();
+      this.sharedQr = this.sharedConn.createQueryRunner();
     } catch (error) {
       throw new UnauthorizedException('Requiere token de autenticación');
     }

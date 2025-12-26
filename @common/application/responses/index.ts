@@ -10,3 +10,11 @@ export class CtmTypeRes {
   @ApiProperty({ example: 'string (opcional)' })
   abbreviation: string;
 }
+
+export class UsuarioBasicoRes {
+  @ApiProperty()
+  cedula: string;
+
+  @ApiProperty()
+  nombreCompleto: string;
+}

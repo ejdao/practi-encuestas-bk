@@ -20,7 +20,8 @@
     "paths": {
       "@ctypes/*": ["@types/*"],
       "@gen/*": ["apps/general/*"],
-      "@gen/ubicacion/*": ["apps/general/shared/ubicacion/*"]
+      "@gen/ubicacion/*": ["apps/general/shared/ubicacion/*"],
+      "@enc/*": ["apps/encuestas/*"]
     }
   }
 }

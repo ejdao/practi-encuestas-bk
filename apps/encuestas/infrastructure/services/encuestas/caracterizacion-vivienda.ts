@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { EvaluacionesBaseSource } from '../_base';
-import { EncuestadoOrm } from '@orm/encuestas';
-import { ENCUESTAS_KEY_IDS } from '@enc/application/constants';
-import { EncuestaOrm, RespuestaOrm } from '@orm/encuestas';
+import { EncCaracterizacionViviendaOrm, EncuestadoOrm } from '@orm/encuestas';
+import { CARACTERIZACION_VIVIENDA_KEY_IDS, ENCUESTAS_KEY_IDS } from '@enc/application/constants';
 import { RespuestaPayload } from '@enc/application/payloads';
 import { PARENTEZCOS } from '@ctypes/encuestas';
-import { STRING_UTILITIES } from '@common/application/services';
 
 @Injectable()
 export class CaracterizacionViviendaImpl extends EvaluacionesBaseSource {
@@ -18,8 +16,7 @@ export class CaracterizacionViviendaImpl extends EvaluacionesBaseSource {
       await this.qr.startTransaction();
 
       const encuestadoRp = this.qr.manager.getRepository(EncuestadoOrm);
-      const evaluacionRp = this.qr.manager.getRepository(EncuestaOrm);
-      const respuestaRp = this.qr.manager.getRepository(RespuestaOrm);
+      const caractViviendaRp = this.qr.manager.getRepository(EncCaracterizacionViviendaOrm);
 
       const encuestado = await encuestadoRp.findOne({
         where: { id: jefeHogarId },
@@ -31,43 +28,51 @@ export class CaracterizacionViviendaImpl extends EvaluacionesBaseSource {
         throw new Error('El encuestado no es un jefe de hogar');
       }
 
-      const viviendas = await evaluacionRp.find({
-        where: {
-          encuestadoId: encuestado.id,
-          formatoId: ENCUESTAS_KEY_IDS.caracterizacionVivienda,
-        },
+      const viviendas = await caractViviendaRp.find({
+        where: { encuestadoId: encuestado.id },
       });
 
       if (viviendas.length) {
         throw new Error('El encuestado solo puede tener una vivienda');
       }
 
-      const newEvaluacion = new EncuestaOrm();
-      newEvaluacion.encuestadoId = encuestado.id;
-      newEvaluacion.isAnulada = false;
-      newEvaluacion.isCalificable = false;
-      newEvaluacion.formatoId = ENCUESTAS_KEY_IDS.caracterizacionVivienda;
-      newEvaluacion.creadoPorId = this.auth.id;
-      newEvaluacion.fechaCreacion = new Date();
+      const enc = new EncCaracterizacionViviendaOrm();
+      enc.encuestadoId = encuestado.id;
+      enc.documentoAcreditaPropiedad = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.documentoAcreditaPropiedad
+      )[0]?.respuesta as any;
+      enc.materialParedes = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.materialParedes
+      )[0]?.respuesta as any;
+      enc.materialPisos = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.materialPisos
+      )[0]?.respuesta as any;
+      enc.materialTecho = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.materialTecho
+      )[0]?.respuesta as any;
+      enc.principalServicioSanitario = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.principalServicioSanitario
+      )[0]?.respuesta as any;
+      enc.tieneAcueducto = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.tieneAcueducto
+      )[0]?.respuesta as any;
+      enc.tieneAlcantarillado = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.tieneAlcantarillado
+      )[0]?.respuesta as any;
+      enc.tieneEnergiaElectrica = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.tieneEnergiaElectrica
+      )[0]?.respuesta as any;
+      enc.tieneGasDomiciliario = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.tieneGasDomiciliario
+      )[0]?.respuesta as any;
+      enc.tieneRecoleccionBasura = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.tieneRecoleccionBasura
+      )[0]?.respuesta as any;
+      enc.tipoVivienda = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_VIVIENDA_KEY_IDS.tipoVivienda
+      )[0]?.respuesta as any;
 
-      const evaluacionStored = await evaluacionRp.save(newEvaluacion);
-
-      const respuestas: RespuestaOrm[] = [];
-
-      dataFt.forEach(d => {
-        const r = new RespuestaOrm();
-        r.encuestaId = evaluacionStored.id;
-        r.preguntaId = d.pregunta.id;
-        r.respuesta =
-          d.respuesta !== null
-            ? STRING_UTILITIES.trim(
-                `${typeof d.respuesta === 'boolean' ? (d.respuesta === true ? 1 : 0) : d.respuesta}`
-              )
-            : null;
-        respuestas.push(r);
-      });
-
-      await respuestaRp.save(respuestas);
+      await caractViviendaRp.save(enc);
 
       await this.qr.commitTransaction();
 

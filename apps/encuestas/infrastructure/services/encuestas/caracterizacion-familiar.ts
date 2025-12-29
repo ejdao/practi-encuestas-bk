@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { EvaluacionesBaseSource } from '../_base';
 import { EncuestadoOrm } from '@orm/encuestas';
+import { EvaluacionesBaseSource } from '../_base';
 import { CARACTERIZACION_FAMILIAR_KEY_IDS, ENCUESTAS_KEY_IDS } from '@enc/application/constants';
-import { EncuestaOrm, RespuestaOrm } from '@orm/encuestas';
-import { RespuestaPayload } from '@enc/application/payloads';
-import { Respuesta } from '@enc/domain/entities';
-import { Not } from 'typeorm';
 import { ParentezcoCode, PARENTEZCOS } from '@ctypes/encuestas';
 import { STRING_UTILITIES } from '@common/application/services';
+import { RespuestaPayload } from '@enc/application/payloads';
 import { TipoDocUsuarioCode } from '@ctypes/general/usuario';
+import { Respuesta } from '@enc/domain/entities';
+import { Not } from 'typeorm';
 
 @Injectable()
 export class CaracterizacionFamiliarImpl extends EvaluacionesBaseSource {
@@ -20,8 +19,6 @@ export class CaracterizacionFamiliarImpl extends EvaluacionesBaseSource {
       await this.qr.startTransaction();
 
       const encuestadoRp = this.qr.manager.getRepository(EncuestadoOrm);
-      const encuestaRp = this.qr.manager.getRepository(EncuestaOrm);
-      const respuestaRp = this.qr.manager.getRepository(RespuestaOrm);
 
       const jefeHogar = await encuestadoRp.findOne({
         where: { id: jefeHogarId },
@@ -67,53 +64,27 @@ export class CaracterizacionFamiliarImpl extends EvaluacionesBaseSource {
       familiar.creadoPorId = this.auth.id;
       familiar.fechaCreacion = new Date();
       familiar.fechaNacimiento = keys.fechaNacimiento;
+      familiar.sexo = +keys.sexo;
+      familiar.etnia = +keys.etnia;
+      familiar.esVictima = keys.esVictima as boolean;
+      familiar.tipoDiscapacidad = keys.tipoDiscapacidad as number;
+      familiar.programasSocialesEstado = keys.programasSocialesEstado as string;
+      familiar.leeYEscribe = keys.leeYEscribe as boolean;
+      familiar.ultimoTituloAcademico = +keys.ultimoTituloAcademico;
+      familiar.actualMenteEstudia = keys.actualMenteEstudia as boolean;
+      familiar.nivelCursado = keys.nivelCursado as string;
+      familiar.gradoSemestre = keys.gradoSemestre as string;
+      familiar.transporteEscolar = keys.transporteEscolar as boolean;
+      familiar.alimentacionEscolar = keys.alimentacionEscolar as boolean;
+      familiar.jovenesEnAccion = keys.jovenesEnAccion as boolean;
+      familiar.familiasEnAccion = keys.familiasEnAccion as boolean;
+      familiar.creditoIcetex = keys.creditoIcetex as boolean;
+      familiar.regimenSalud = keys.regimenSalud as number;
+      familiar.epsId = keys.epsId as number;
+      familiar.situacionActual = keys.situacionActual as number;
+      familiar.papelDesempeniadoEmpresa = keys.papelDesempeniadoEmpresa as number;
 
-      const newFamiliar = await encuestadoRp.save(familiar);
-
-      const encuestaAnterior = await encuestaRp.findOne({
-        where: {
-          encuestadoId: newFamiliar.id,
-          formatoId: ENCUESTAS_KEY_IDS.caracterizacionFamiliar,
-        },
-      });
-
-      if (encuestaAnterior) {
-        const respuestasAnteriores = await respuestaRp.find({
-          where: {
-            encuestaId: encuestaAnterior.id,
-          },
-        });
-        if (respuestasAnteriores.length) await respuestaRp.remove(respuestasAnteriores);
-      }
-
-      if (encuestaAnterior) await encuestaRp.remove(encuestaAnterior);
-
-      const newEvaluacion = new EncuestaOrm();
-      newEvaluacion.encuestadoId = newFamiliar.id;
-      newEvaluacion.isAnulada = false;
-      newEvaluacion.isCalificable = false;
-      newEvaluacion.formatoId = ENCUESTAS_KEY_IDS.caracterizacionFamiliar;
-      newEvaluacion.creadoPorId = this.auth.id;
-      newEvaluacion.fechaCreacion = new Date();
-
-      const evaluacionStored = await encuestaRp.save(newEvaluacion);
-
-      const respuestas: RespuestaOrm[] = [];
-
-      dataFt.forEach(d => {
-        const r = new RespuestaOrm();
-        r.encuestaId = evaluacionStored.id;
-        r.preguntaId = d.pregunta.id;
-        r.respuesta =
-          [undefined, null, ''].indexOf(d.respuesta as any) >= 0
-            ? null
-            : STRING_UTILITIES.trim(
-                `${typeof d.respuesta === 'boolean' ? (d.respuesta === true ? 1 : 0) : d.respuesta}`
-              );
-        respuestas.push(r);
-      });
-
-      await respuestaRp.save(respuestas);
+      await encuestadoRp.save(familiar);
 
       await this.qr.commitTransaction();
 
@@ -131,17 +102,17 @@ export class CaracterizacionFamiliarImpl extends EvaluacionesBaseSource {
     const apellidos = data.filter(
       r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.apellidos
     )[0];
-    const tipoDocumento = data.filter(
-      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.documento.tipo
+    const tipoDocumentoCode = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.tipoDocumentoCode
     )[0];
     const numeroDocumento = data.filter(
-      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.documento.numero
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.numeroDocumento
     )[0];
     const tieneLibretaMilitar = data.filter(
       r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.tieneLibretaMilitar
     )[0];
-    const parentezco = data.filter(
-      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.parentezco
+    const parentezcoCode = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.parentezcoCode
     )[0];
     const fechaNacimiento = data.filter(
       r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.fechaNacimiento
@@ -149,18 +120,88 @@ export class CaracterizacionFamiliarImpl extends EvaluacionesBaseSource {
     const numeroTelefono = data.filter(
       r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.numeroTelefono
     )[0];
+    const sexo = data.filter(r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.sexo)[0]!;
+    const etnia = data.filter(r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.etnia)[0]!;
+    const esVictima = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.esVictima
+    )[0]!;
+    const tipoDiscapacidad = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.tipoDiscapacidad
+    )[0]!;
+    const programasSocialesEstado = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.programasSocialesEstado
+    )[0]!;
+    const leeYEscribe = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.leeYEscribe
+    )[0]!;
+    const ultimoTituloAcademico = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.ultimoTituloAcademico
+    )[0]!;
+    const actualMenteEstudia = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.actualMenteEstudia
+    )[0]!;
+    const nivelCursado = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.nivelCursado
+    )[0]!;
+    const gradoSemestre = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.gradoSemestre
+    )[0]!;
+    const transporteEscolar = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.transporteEscolar
+    )[0]!;
+    const alimentacionEscolar = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.alimentacionEscolar
+    )[0]!;
+    const jovenesEnAccion = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.jovenesEnAccion
+    )[0]!;
+    const familiasEnAccion = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.familiasEnAccion
+    )[0]!;
+    const creditoIcetex = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.creditoIcetex
+    )[0]!;
+    const regimenSalud = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.regimenSalud
+    )[0]!;
+    const eps = data.filter(r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.eps)[0]!;
+    const situacionActual = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.situacionActual
+    )[0]!;
+    const papelDesempeniadoEmpresa = data.filter(
+      r => r.pregunta.id === CARACTERIZACION_FAMILIAR_KEY_IDS.papelDesempeniadoEmpresa
+    )[0]!;
 
     return {
       nombres: nombres.respuesta as string,
       apellidos: apellidos.respuesta as string,
       documento: {
-        tipoCode: tipoDocumento.respuesta as TipoDocUsuarioCode,
+        tipoCode: tipoDocumentoCode.respuesta as TipoDocUsuarioCode,
         numero: numeroDocumento.respuesta as string,
       },
       tieneLibretaMilitar: tieneLibretaMilitar.respuesta as boolean,
-      parentezcoCode: parentezco.respuesta as ParentezcoCode,
+      parentezcoCode: parentezcoCode.respuesta as ParentezcoCode,
       fechaNacimiento: new Date(fechaNacimiento.respuesta as string),
       numeroTelefono: numeroTelefono.respuesta as string,
+      sexo: sexo.respuesta,
+      etnia: etnia.respuesta,
+      esVictima: esVictima.respuesta,
+      tipoDiscapacidad: tipoDiscapacidad.respuesta,
+      programasSocialesEstado: programasSocialesEstado.respuesta,
+      leeYEscribe: leeYEscribe.respuesta,
+      ultimoTituloAcademico: ultimoTituloAcademico.respuesta,
+      actualMenteEstudia: actualMenteEstudia.respuesta,
+      nivelCursado: nivelCursado.respuesta,
+      gradoSemestre: gradoSemestre.respuesta,
+      transporteEscolar: transporteEscolar.respuesta,
+      alimentacionEscolar: alimentacionEscolar.respuesta,
+      jovenesEnAccion: jovenesEnAccion.respuesta,
+      familiasEnAccion: familiasEnAccion.respuesta,
+      creditoIcetex: creditoIcetex.respuesta,
+      regimenSalud: regimenSalud.respuesta,
+      epsId: eps.respuesta,
+      situacionActual: situacionActual.respuesta,
+      papelDesempeniadoEmpresa: papelDesempeniadoEmpresa.respuesta,
     };
   }
 }

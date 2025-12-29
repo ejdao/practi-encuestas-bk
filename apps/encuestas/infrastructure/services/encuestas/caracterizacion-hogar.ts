@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EvaluacionesBaseSource } from '../_base';
-import { EncuestadoOrm } from '@orm/encuestas';
+import { EncCaracterizacionHogarOrm, EncuestadoOrm } from '@orm/encuestas';
 import { CARACTERIZACION_HOGAR_KEY_IDS, ENCUESTAS_KEY_IDS } from '@enc/application/constants';
-import { EncuestaOrm, RespuestaOrm } from '@orm/encuestas';
 import { RespuestaPayload } from '@enc/application/payloads';
 import { STRING_UTILITIES } from '@common/application/services';
 import { TIPOS_DOCUMENTO } from '@ctypes/general/usuario';
@@ -16,10 +15,10 @@ export class CaracterizacionHogarImpl extends EvaluacionesBaseSource {
     let transaccionStarted = false;
     try {
       const cedulaEncuestado = dataFt.filter(
-        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.documento.numero
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.jefeHogarNumeroDocumento
       );
       const nombreEncuestado = dataFt.filter(
-        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.nombreCompleto
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.jefeHogarNombreCompleto
       );
       const direccionEncuestado = dataFt.filter(
         r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.direccion
@@ -34,9 +33,8 @@ export class CaracterizacionHogarImpl extends EvaluacionesBaseSource {
       await this.qr.connect();
       await this.qr.startTransaction();
 
+      const caractHogarRp = this.qr.manager.getRepository(EncCaracterizacionHogarOrm);
       const encuestadoRp = this.qr.manager.getRepository(EncuestadoOrm);
-      const evaluacionRp = this.qr.manager.getRepository(EncuestaOrm);
-      const respuestaRp = this.qr.manager.getRepository(RespuestaOrm);
 
       const encuestado = await encuestadoRp.findOne({
         where: { numeroDocumento: cedulaEncuestado[0].respuesta as string },
@@ -66,32 +64,55 @@ export class CaracterizacionHogarImpl extends EvaluacionesBaseSource {
 
       encuestadoStored = await encuestadoRp.save(newEncuestado);
 
-      const newEvaluacion = new EncuestaOrm();
-      newEvaluacion.encuestadoId = encuestadoStored.id;
-      newEvaluacion.isAnulada = false;
-      newEvaluacion.isCalificable = false;
-      newEvaluacion.formatoId = ENCUESTAS_KEY_IDS.caracterizacionHogar;
-      newEvaluacion.creadoPorId = this.auth.id;
-      newEvaluacion.fechaCreacion = new Date();
+      const enc = new EncCaracterizacionHogarOrm();
+      enc.encuestadoId = newEncuestado.id;
+      enc.barrio = dataFt.filter(r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.barrio)[0]
+        ?.respuesta as any;
+      enc.cantidadDormitorios = +dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.cantidadDormitorios
+      )[0]?.respuesta as any;
+      enc.cantidadPersonasNucleoHogar = +dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.cantidadPersonasNucleoHogar
+      )[0]?.respuesta as any;
+      enc.departamentoId = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.departamentoId
+      )[0]?.respuesta as any;
+      enc.direccion = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.direccion
+      )[0]?.respuesta as any;
+      enc.familiaIncluidaProyectosProductivos = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.familiaIncluidaProyectosProductivos
+      )[0]?.respuesta as any;
+      enc.familiaPoseeTierras = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.familiaPoseeTierras
+      )[0]?.respuesta as any;
+      enc.localidadId = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.localidadId
+      )[0]?.respuesta as any;
+      enc.municipioId = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.municipioId
+      )[0]?.respuesta as any;
+      enc.numeroHectareas = +dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.numeroHectareas
+      )[0]?.respuesta as any;
+      enc.numeroTelefono = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.numeroTelefono
+      )[0]?.respuesta as any;
+      enc.paisId = 49;
+      enc.recibioSubsidioVivienda = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.recibioSubsidioVivienda
+      )[0]?.respuesta as any;
+      enc.tenenciaViviendaCode = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.tenenciaViviendaCode
+      )[0]?.respuesta as any;
+      enc.tierraTieneEscrituraRegistrada = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.tierraTieneEscrituraRegistrada
+      )[0]?.respuesta as any;
+      enc.tipoProyecto = dataFt.filter(
+        r => r.pregunta.id === CARACTERIZACION_HOGAR_KEY_IDS.tipoProyecto
+      )[0]?.respuesta as any;
 
-      const evaluacionStored = await evaluacionRp.save(newEvaluacion);
-
-      const respuestas: RespuestaOrm[] = [];
-
-      dataFt.forEach(d => {
-        const r = new RespuestaOrm();
-        r.encuestaId = evaluacionStored.id;
-        r.preguntaId = d.pregunta.id;
-        r.respuesta =
-          [undefined, null, ''].indexOf(d.respuesta as any) >= 0
-            ? null
-            : STRING_UTILITIES.trim(
-                `${typeof d.respuesta === 'boolean' ? (d.respuesta === true ? 1 : 0) : d.respuesta}`
-              );
-        respuestas.push(r);
-      });
-
-      await respuestaRp.save(respuestas);
+      await caractHogarRp.save(enc);
 
       await this.qr.commitTransaction();
 

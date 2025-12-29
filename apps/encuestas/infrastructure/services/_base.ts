@@ -26,7 +26,7 @@ export class EvaluacionesBaseSource extends BaseSource {
 
       for (let index = 0; index < respuestas.length; index++) {
         const element = respuestas[index];
-        await this._validarRespuestas(element);
+        //await this._validarRespuestas(element);
       }
 
       return respuestas;

@@ -12,5 +12,7 @@ export const __ENC__TBL_NMS__ = {
     preguntas: 'EVAPREGUNTA',
     opciones: 'EVAOPCION',
     respuestas: 'EVARESPUESTA',
+    caracterizacionHogar: 'ENCCARACTERIZACIONHOGAR',
+    caracterizacionVivienda: 'ENCCARACTERIZACIONVIVIENDA',
   },
 };

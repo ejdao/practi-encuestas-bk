@@ -8,7 +8,7 @@ import { BaseSource } from '@common/infrastructure/services';
 import { EncuestadoOrm, FormatoOrm, OpcionOrm, PreguntaOrm } from '@orm/encuestas';
 import { ParentezcoCode, PARENTEZCOS } from '@ctypes/encuestas';
 import { CorregimientoOrm, DepartamentoOrm, MunicipioOrm } from '@orm/shared/ubicacion';
-import { EpsOrm } from '@orm/shared';
+import { EpsOrm } from '@orm/shared/general';
 
 @Injectable()
 export class EncuestadoCrudSource extends BaseSource {
@@ -30,7 +30,7 @@ export class EncuestadoCrudSource extends BaseSource {
               { numeroDocumento: Like(`%${pattern}%`), parentezcoCode, creadoPorId },
             ]
           : { parentezcoCode, creadoPorId },
-        relations: ['creadoPor', 'jefeHogar', 'encuestas', 'familiares'],
+        relations: ['creadoPor', 'jefeHogar', 'caracterizacionVivienda', 'familiares'],
         take: forComplement ? 5 : undefined,
         order: forComplement ? { id: 'desc' } : undefined,
       });

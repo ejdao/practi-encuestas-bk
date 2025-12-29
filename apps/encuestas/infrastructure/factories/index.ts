@@ -13,7 +13,7 @@ import { TipoPreguntaCode, tipoPreguntaTypeFactory, TIPOS_PREGUNTA } from '@ctyp
 import { PARENTEZCOS, parentezcoTypeFactory } from '@ctypes/encuestas';
 import { tipoDocUsuarioTypeFactory } from '@ctypes/general/usuario';
 import { STRING_UTILITIES } from '@common/application/services';
-import { EpsOrm } from '@orm/shared';
+import { EpsOrm } from '@orm/shared/general';
 
 export interface DTTAPLD {
   departamentos: DepartamentoOrm[];
@@ -92,9 +92,7 @@ export const encuestadoOrmToEncuestadoResFactory = (data: EncuestadoOrm) => {
   e.parentezco = parentezcoTypeFactory(data.parentezcoCode);
   e.tieneLibretaMilitar = data.tieneLibretaMilitar;
   e.tipoDocumento = tipoDocUsuarioTypeFactory(data.tipoDocumentoCode);
-  e.cantViviendasPropias = data.encuestas.filter(
-    ec => ec.formatoId === ENCUESTAS_KEY_IDS.caracterizacionVivienda
-  ).length;
+  e.cantViviendasPropias = data.caracterizacionVivienda.length;
   e.cantFamiliares = data.familiares.filter(
     fm => fm.parentezcoCode !== PARENTEZCOS.JEFE_HOGAR.getCode()
   ).length;

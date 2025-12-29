@@ -1,6 +1,6 @@
 import { Raw } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { PaisRes } from '@gen/ubicacion/application/responses';
+import { PaisRes } from '@shared/ubicacion/application/responses';
 import { STRING_UTILITIES } from '@common/application/services';
 import { UBICACION_FACTORIES } from '../factories';
 import { PaisOrm } from '@orm/shared/ubicacion';

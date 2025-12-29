@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CorregimientoRes } from '@gen/ubicacion/application/responses';
+import { CorregimientoRes } from '@shared/ubicacion/application/responses';
 import { CorregimientoOrm, DepartamentoOrm, MunicipioOrm } from '@orm/shared/ubicacion';
 import { STRING_UTILITIES } from '@common/application/services';
 import { UBICACION_FACTORIES } from '../factories';

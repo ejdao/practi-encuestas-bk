@@ -1,7 +1,7 @@
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
-import { DepartamentoCrudSource } from '@gen/ubicacion/infrastructure/repositories';
-import { DepartamentoRes } from '@gen/ubicacion/application/responses';
+import { DepartamentoCrudSource } from '@shared/ubicacion/infrastructure/repositories';
+import { DepartamentoRes } from '@shared/ubicacion/application/responses';
 
 @ApiTags('V1 | Ubicación')
 @Controller('v1/srd/ubicacion/departamentos')

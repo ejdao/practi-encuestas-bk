@@ -1,6 +1,6 @@
 import { Raw } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { MunicipioRes } from '@gen/ubicacion/application/responses';
+import { MunicipioRes } from '@shared/ubicacion/application/responses';
 import { DepartamentoOrm, MunicipioOrm } from '@orm/shared/ubicacion';
 import { STRING_UTILITIES } from '@common/application/services';
 import { UBICACION_FACTORIES } from '../factories';

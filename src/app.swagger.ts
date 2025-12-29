@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { SRD_MODULES } from '@gen/shared/shared.module';
+import { SRD_MODULES } from '@shared/shared.module';
 import { SEG_MODULES } from '@gen/general.module';
 
 const config = [

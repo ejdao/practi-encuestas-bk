@@ -1,6 +1,4 @@
-import { EpsOrm } from './eps.orm';
+import { ORM_SHARED_GENERAL_ENTITIES } from './general';
 import { ORM_UBI_ENTITIES } from './ubicacion';
 
-export * from './eps.orm';
-
-export const ORM_SHARED_ENTITIES = [...ORM_UBI_ENTITIES, EpsOrm];
+export const ORM_SHARED_ENTITIES = [...ORM_UBI_ENTITIES, ...ORM_SHARED_GENERAL_ENTITIES];
